@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Text, TextInput } from "react-native";
+import { Button, SafeAreaView, Text, TextInput,Platform } from "react-native";
 import { Modal, StyleSheet, View } from "react-native";
 
 interface AddTaskModalProps{
@@ -21,37 +21,47 @@ const AddTaskModal:React.FC<AddTaskModalProps> =({visible , onClose , onSubmit})
     }
     return (
         <Modal visible={visible} animationType="slide">
-           <View style={styles.mnodalContainer}>
-              <Text style={styles.title}>Add new Task</Text>
+        <SafeAreaView style={styles.modalContainer}>
+            <Text style={styles.title}>Add new Task</Text>
 
-              <TextInput 
-                style={styles.input}
+            <TextInput
+                style={[styles.input, Platform.OS === 'ios' && styles.iosInput]}
                 placeholder="Title"
                 value={title}
                 onChangeText={setTitle}
-              />
-              <TextInput 
-                style={[styles.input , styles.multiline]}
+            />
+            <TextInput
+                style={[
+                    styles.input,
+                    styles.multiline,
+                    Platform.OS === 'ios' && styles.iosInput
+                ]}
                 placeholder="Description"
                 value={description}
                 onChangeText={setDescription}
                 multiline
-              />
-             <View style={styles.buttonContainer}>
-                  <Button title="Cancel" onPress={onClose} />
-                  <Button title="Add Task" onPress={handleSubmit} />
-             </View>
-           </View>
-        </Modal>
+            />
+            
+            <View style={styles.buttonContainer}>
+                <Button title="Cancel" onPress={onClose} color="#666" />
+                <Button title="Add Task" onPress={handleSubmit} />
+            </View>
+        </SafeAreaView>
+    </Modal>
     )
 }
 
 const styles= StyleSheet.create({
-    mnodalContainer:{
-        flex:1,
-        padding:20,
-        justifyContent:'center',
-
+    modalContainer: {
+        flex: 1,
+        padding: 20,
+        justifyContent: 'center',
+    },
+    iosInput: {
+        borderWidth: 0.5,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        padding: 12
     },
     title:{
         fontSize:20,

@@ -1,6 +1,6 @@
 import { Task } from "@/interface/Task";
 import Checkbox from "expo-checkbox";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity,Platform } from "react-native";
 import { Text, View } from "react-native";
 
 interface TaskItemProps{
@@ -10,20 +10,34 @@ interface TaskItemProps{
 }
 
 const TaskItem:React.FC<TaskItemProps> =({task , onToggle , onDelete})=>(
-    <View style={styles.conatiner}>
-        <Checkbox value={task.completed} onValueChange={()=>onToggle(task.id)}/>
+<View style={styles.conatiner}>
+            <Checkbox value={task.completed} onValueChange={() => onToggle(task.id)} />
+            
             <View style={styles.textContainer}>
-                <Text style={[styles.title ,task.completed && styles.completed]} numberOfLines={1}>
-                  {task.title}
+                <Text 
+                    style={[styles.title, task.completed && styles.completed]}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit={false}
+                >
+                    {task.title}
                 </Text>
-                {task.description && <Text style={styles.description}>
-                     {task.description}
-                    </Text>}
+                {task.description && (
+                    <Text style={styles.description}>{task.description}</Text>
+                )}
             </View>
-            <TouchableOpacity onPress={()=> onDelete(task.id)}>
-                 <Text style={styles.delete}>Delete</Text>
+            
+            <TouchableOpacity 
+                onPress={() => onDelete(task.id)}
+                hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+            >
+                <Text style={[
+                    styles.delete,
+                    Platform.OS === 'ios' && styles.iosDelete
+                ]}>
+                    Delete
+                </Text>
             </TouchableOpacity>
-    </View>
+        </View>
 )
 
 const styles = StyleSheet.create({
@@ -51,6 +65,10 @@ const styles = StyleSheet.create({
     },
     delete:{
         fontSize:20
+    },
+    iosDelete: {
+        fontSize: 17,
+        fontWeight: '600'
     }
 })
 

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button, FlatList ,Animated} from 'react-native'
+import { View, Text, StyleSheet, Button, FlatList ,Animated, SafeAreaView ,Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Task } from '@/interface/Task'
 import TaskItem from '@/components/TaskItem';
@@ -63,35 +63,43 @@ const fadeAnim = useState( new Animated.Value(0))[0];
        return true;
     })
   return (
-    <View style={styles.container}>
-      <Button  title='Add Task' onPress={()=>setModalVisible(true)}/>
-        {/*Bonus (Optional) */}
-      <Picker style={styles.picker} selectedValue={filter} onValueChange={(value)=>setFilter(value)}> 
-        <Picker.Item label='All' value="all"  />
-        <Picker.Item label='Completed' value="completed"  />
-        <Picker.Item label='Pending' value="pending"  />
-      </Picker>
-        <FlatList
-           data={filteredTask}
-           keyExtractor={(item)=>item.id}
-           renderItem={({item})=>(
-            <Animated.View style={{opacity:fadeAnim}}>
-              <TaskItem task={item} onToggle={toggleTask} onDelete={deleteTask}/>
-              </Animated.View>
-           )}
-        contentContainerStyle={styles.list}
-        />
-       {/* Add Task Modal will be here */}
-       <AddTaskModal visible={modalVisible} onClose={()=>setModalVisible(false)} onSubmit={addTask}/>
-    </View>
+<SafeAreaView style={styles.container}>
+            <Button title='Add Task' onPress={() => setModalVisible(true)} />
+            
+            <Picker
+                style={[
+                    styles.picker,
+                    Platform.OS === 'ios' && styles.iosPicker
+                ]}
+                selectedValue={filter}
+                onValueChange={(value) => setFilter(value)}
+            >
+                <Picker.Item label='All' value="all" />
+                <Picker.Item label='Completed' value="completed" />
+                <Picker.Item label='Pending' value="pending" />
+            </Picker>
+
+            <FlatList
+                data={filteredTask}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                    <Animated.View style={{ opacity: fadeAnim }}>
+                        <TaskItem task={item} onToggle={toggleTask} onDelete={deleteTask} />
+                    </Animated.View>
+                )}
+                contentContainerStyle={styles.list}
+            />
+            
+            <AddTaskModal visible={modalVisible} onClose={() => setModalVisible(false)} onSubmit={addTask} />
+        </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-    container:{
-        flex:1,
-        paddingTop:50,
-        paddingHorizontal:20
+    container: {
+        flex: 1,
+        paddingTop: Platform.OS === 'ios' ? 20 : 50,
+        paddingHorizontal: 20
     },
     list:{
         paddingBottom:20
@@ -104,5 +112,10 @@ const styles = StyleSheet.create({
 marginVertical:10,
 backgroundColor:'#f0f0f0',
 borderRadius:6
+    },
+    iosPicker: {
+        backgroundColor: 'white',
+        marginVertical: 15,
+        transform: [{ scale: 0.9 }]
     }
 })
